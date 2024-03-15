@@ -82,9 +82,9 @@ def main_window():
 
 
 
-    drug_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "pills.png")), size=(24, 24))
-    modify_button = CTkButton(root, text='Modify Medicine', bg_color='#F7F9F8', fg_color='#2157C2', text_color='white',height=47,width=195,corner_radius=10,hover_color='#3F70D4',image=drug_image,font=fnt_not_bold,command=clicked)
-    modify_button.place(x=15,y=420)
+    dvalidity_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "pills.png")), size=(24, 24))
+    validity_button = CTkButton(root, text='Validity Check', bg_color='#F7F9F8', fg_color='#2157C2', text_color='white',height=47,width=195,corner_radius=10,hover_color='#3F70D4',image=drug_image,font=fnt_not_bold,command=clicked)
+    validity_button.place(x=15,y=420)
 
 
     drug_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "validity.png")), size=(24, 24))

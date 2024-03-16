@@ -23,10 +23,29 @@ root.iconphoto(False, iconpath)
 
 
 
-def clicked():
-    print('Done')
+def add_medicine():
+
+    medicine_name = CTkEntry(root, placeholder_text='Medicine Name', bg_color='#E7ECF2', fg_color='white', text_color='black',height=40,width=260,corner_radius=5)
+    medicine_name.place(x=240,y=40)
 
 
+    medicine_quantity = CTkEntry(root, placeholder_text='Quantity', bg_color='#E7ECF2', fg_color='white', text_color='black',height=40,width=260,corner_radius=5)
+    medicine_quantity.place(x=600,y=40)
+
+
+    validity_date = CTkEntry(root, placeholder_text='Validity Date', bg_color='#E7ECF2', fg_color='white', text_color='black',height=40,width=260,corner_radius=5)
+    validity_date.place(x=240,y=160)
+
+
+    selling_price = CTkEntry(root, placeholder_text='Selling Price', bg_color='#E7ECF2', fg_color='white', text_color='black',height=40,width=260,corner_radius=5)
+    selling_price.place(x=600,y=160)
+
+
+    done_btn =  CTkButton(root, text='Done',bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',corner_radius=5,hover_color='#618EE0',font=fnt_not_bold)
+    done_btn.place(x=900,y=600)
+
+    reset_btn =  CTkButton(root, text='Reset',bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',corner_radius=5,hover_color='#618EE0',font=fnt_not_bold)
+    reset_btn.place(x=900,y=640)
 
 
 # Function to handle the login process
@@ -72,24 +91,24 @@ def main_window():
 
     # Place other buttons as per your design
     plus_image = CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "plus.png")), size=(24, 24))
-    add_button = CTkButton(root, text='Add Medicine', bg_color='#F7F9F8', fg_color='#2157C2', text_color='white',height=47,width=195,corner_radius=10,hover_color='#3F70D4',image=plus_image,font=fnt_not_bold,command=clicked)
-    add_button.place(x=15, y=300)
+    add_button = CTkButton(root, text='Add Medicine',bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=plus_image,font=fnt_not_bold,command=add_medicine)
+    add_button.place(x=10, y=300)
 
     drug_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "drug.png")), size=(24, 24))
-    view_button = CTkButton(root, text='View Medicine', bg_color='#F7F9F8', fg_color='#2157C2', text_color='white',height=47,width=195,corner_radius=10,hover_color='#3F70D4',image=drug_image,font=fnt_not_bold,command=clicked)
-    view_button.place(x=15,y=360)
+    view_button = CTkButton(root, text='View Medicine',bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=drug_image,font=fnt_not_bold,command=add_medicine)
+    view_button.place(x=10,y=360)
 
 
 
 
-    dvalidity_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "pills.png")), size=(24, 24))
-    validity_button = CTkButton(root, text='Validity Check', bg_color='#F7F9F8', fg_color='#2157C2', text_color='white',height=47,width=195,corner_radius=10,hover_color='#3F70D4',image=drug_image,font=fnt_not_bold,command=clicked)
-    validity_button.place(x=15,y=420)
+    drug_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "pills.png")), size=(24, 24))
+    modify_button = CTkButton(root, text='Modify Medicine',bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=drug_image,font=fnt_not_bold,command=add_medicine)
+    modify_button.place(x=10,y=420)
 
 
-    drug_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "validity.png")), size=(24, 24))
-    modify_button = CTkButton(root, text='Modify Medicine', bg_color='#F7F9F8', fg_color='#2157C2', text_color='white',height=47,width=195,corner_radius=10,hover_color='#3F70D4',image=drug_image,font=fnt_not_bold,command=clicked)
-    modify_button.place(x=15,y=480)
+    validity_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "validity.png")), size=(24, 24))
+    validity_button = CTkButton(root, text='Validity Check', bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=validity_image ,font=fnt_not_bold,command=add_medicine)
+    validity_button.place(x=10,y=480)
 
 
 
@@ -179,6 +198,8 @@ background_login_label.pack()
 
 fnt = CTkFont(family='Bahnschrift', weight='bold', size=20)
 fnt_not_bold = CTkFont(family='Bahnschrift', size=17)
+
+
 ent_username = CTkEntry(root, placeholder_text='Username', bg_color='#F7F9F8', fg_color='white', border_color='#1E61D8', corner_radius=25, height=47, width=316, text_color='black')
 ent_username.place(x=40,y=300)
 

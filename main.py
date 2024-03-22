@@ -1,13 +1,11 @@
 from customtkinter import *
 from tkinter import messagebox
 from customtkinter import CTkToplevel
-from tkinter import Text,Toplevel
+from tkinter import Text,Toplevel,ttk,Text
 from PIL import Image,ImageTk
 import os
 import mysql.connector
 import tkinter as tk
-from tkinter import Text
-from tkinter import ttk
 
 
 
@@ -28,6 +26,10 @@ root.iconphoto(False, iconpath)
 
 
 def add_medicine():
+    LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
+    label_add_medicine_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
+    label_add_medicine_screen.place(x=210,y=0)
+
     def save_medicine():
         if (medicine_name.get()=='' or medicine_name.get()=='Medicine Name') or \
         (medicine_quantity.get()=='' or medicine_quantity.get()=='Quantity') or \
@@ -56,40 +58,42 @@ def add_medicine():
                 messagebox.showerror('Database Error', f'Database error: {err}')
 
 
-    medicine_name = CTkEntry(root, placeholder_text='Medicine Name', bg_color='#E7ECF2', fg_color='white',
+    medicine_name = CTkEntry(label_add_medicine_screen, placeholder_text='Medicine Name', bg_color='#E7ECF2', fg_color='white',
                              text_color='black', height=40, width=260, corner_radius=5)
-    medicine_name.place(x=240, y=40)
+    medicine_name.place(x=20, y=40)
 
-    medicine_quantity = CTkEntry(root, placeholder_text='Quantity', bg_color='#E7ECF2', fg_color='white',
+    medicine_quantity = CTkEntry(label_add_medicine_screen, placeholder_text='Quantity', bg_color='#E7ECF2', fg_color='white',
                                  text_color='black', height=40, width=260, corner_radius=5)
     medicine_quantity.place(x=600, y=40)
 
-    validity_date = CTkEntry(root, placeholder_text='Example 2025-7-18', bg_color='#E7ECF2', fg_color='white',
+    validity_date = CTkEntry(label_add_medicine_screen, placeholder_text='Example 2025-7-18', bg_color='#E7ECF2', fg_color='white',
                               text_color='black', height=40, width=260, corner_radius=5)
-    validity_date.place(x=240, y=160)
+    validity_date.place(x=20, y=160)
 
-    purchase_price = CTkEntry(root, placeholder_text='purchase Price', bg_color='#E7ECF2', fg_color='white',
+    purchase_price = CTkEntry(label_add_medicine_screen, placeholder_text='purchase Price', bg_color='#E7ECF2', fg_color='white',
                              text_color='black', height=40, width=260, corner_radius=5)
     purchase_price.place(x=600, y=160)
 
-    selling_price = CTkEntry(root, placeholder_text='Selling Price', bg_color='#E7ECF2', fg_color='white',
+    selling_price = CTkEntry(label_add_medicine_screen, placeholder_text='Selling Price', bg_color='#E7ECF2', fg_color='white',
                              text_color='black', height=40, width=260, corner_radius=5)
-    selling_price.place(x=600, y=200)
+    selling_price.place(x=600, y=280)
 
-    done_btn = CTkButton(root, text='Done', bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',
+    done_btn = CTkButton(label_add_medicine_screen, text='Done', bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',
                          corner_radius=5, hover_color='#618EE0', font=fnt_not_bold, command=save_medicine)
-    done_btn.place(x=900, y=600)
+    done_btn.place(x=710, y=600)
 
-    reset_btn = CTkButton(root, text='Reset', bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',
+    reset_btn = CTkButton(label_add_medicine_screen, text='Reset', bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',
                           corner_radius=5, hover_color='#618EE0', font=fnt_not_bold)
-    reset_btn.place(x=900, y=640)
+    reset_btn.place(x=710, y=640)
 
 
 
 
 
 def view_medicines():
-    
+    LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
+    label_view_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
+    label_view_screen.place(x=210,y=0)
     try:
         # Connect to the database
         mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
@@ -100,8 +104,8 @@ def view_medicines():
         medicines = mycursor.fetchall()
 
         # Create a frame to contain the treeview
-        tree_frame = CTkFrame(root)
-        tree_frame.place(x=330, y=40)
+        tree_frame = CTkFrame(label_view_screen)
+        tree_frame.place(x=100, y=40)
 
         # Define treeview
         tree = ttk.Treeview(tree_frame, columns=("Medicine Name", "Expiry Date", "Purchase Price", "Selling Price", "Quantity"))
@@ -166,10 +170,12 @@ def main_window():
     signup_label.place_forget()
     signup_button.place_forget()
 
+
     # Place your main window widgets here
     main_screen_background = CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "mainscreen-01.jpg")), size=(1080, 720))
     background_screen_label = CTkLabel(root, image=main_screen_background, text='')
     background_screen_label.pack()
+    
 
     # Place other buttons as per your design
     plus_image = CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "plus.png")), size=(24, 24))

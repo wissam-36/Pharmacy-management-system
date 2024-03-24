@@ -22,10 +22,16 @@ iconpath = ImageTk.PhotoImage(file=os.path.join("Pharmacy assets","backgrounds",
 root.wm_iconbitmap()
 root.iconphoto(False, iconpath)
 
+LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
+
+
+
+
+
+
 
 
 def add_medicine():
-    LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
     label_add_medicine_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
     label_add_medicine_screen.place(x=210,y=0)
 
@@ -90,7 +96,6 @@ def add_medicine():
 
 
 def view_medicines():
-    LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
     label_view_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
     label_view_screen.place(x=210,y=0)
     try:
@@ -102,7 +107,7 @@ def view_medicines():
         mycursor.execute("SELECT medicine_name, expiry_date, purchase_price, selling_price, quantity FROM Medicines")
         medicines = mycursor.fetchall()
 
-        # Create a frame to contain the treeview
+        # Create a frame to contain the table
         tree_frame = CTkFrame(label_view_screen)
         tree_frame.place(x=100, y=40)
 
@@ -136,8 +141,6 @@ def view_medicines():
 
 
 def modify_medicines():
-
-    LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
     label_modify_medicines_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
     label_modify_medicines_screen.place(x=210,y=0)
     
@@ -224,7 +227,7 @@ def modify_medicines():
                                    corner_radius=5, height=47, width=316, text_color='black')
     medicine_name_entry.place(x=40, y=200)
 
-    validity_date_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='New Validity Date', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
+    validity_date_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='New Validity Date(2025-7-28)', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
                                     corner_radius=5, height=47, width=316, text_color='black')
     validity_date_entry.place(x=40, y=270)
 
@@ -249,6 +252,44 @@ def modify_medicines():
     delete_button.place(x=200, y=600)
 
 
+
+def validity_medicines():
+    label_validity_medicines_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
+    label_validity_medicines_screen.place(x=210,y=0)
+    try:
+        # Connect to the database
+        mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+        mycursor = mydb.cursor()
+
+        # Execute the query to fetch expired data
+        mycursor.execute("SELECT medicine_name, expiry_date,quantity FROM Medicines WHERE expiry_date<=CURDATE()")
+        medicines = mycursor.fetchall()
+
+        # Create a frame to contain the table
+        tree_frame = CTkFrame(label_validity_medicines_screen)
+        tree_frame.place(x=200, y=40)
+
+        # Define treeview
+        tree = ttk.Treeview(tree_frame, columns=("Medicine Name", "Expiry Date","Quantity"))
+        tree.pack(expand=True, fill="both")
+
+        # Define column headings and adjust column width
+        tree.heading("#0", text="ID", anchor=tk.CENTER)
+        tree.column("#0", width=50)
+        tree.heading("#1", text="Medicine Name", anchor=tk.CENTER)
+        tree.column("#1", width=150)
+        tree.heading("#2", text="Expiry Date", anchor=tk.CENTER)
+        tree.column("#2", width=100)
+        tree.heading("#3", text="Quantity", anchor=tk.CENTER)
+        tree.column("#3", width=100)
+
+        # Insert expired data into the table
+        for idx, medicine in enumerate(medicines, start=1):
+            tree.insert("", "end", text=idx, values=medicine)
+
+        mydb.close()
+    except mysql.connector.Error as err:
+        messagebox.showerror('Database Error', f'Database error: {err}')
 
 
 
@@ -291,22 +332,21 @@ def main_window():
     signup_button.place_forget()
 
 
-    # Place your main window widgets here
+    # Place main window
     main_screen_background = CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "mainscreen-01.jpg")), size=(1080, 720))
     background_screen_label = CTkLabel(root, image=main_screen_background, text='')
     background_screen_label.pack()
     
 
-    # Place other buttons as per your design
+    # Place main window buttons
     plus_image = CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "plus.png")), size=(24, 24))
     add_button = CTkButton(root, text='Add Medicine',bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=plus_image,font=fnt_not_bold,command=add_medicine)
     add_button.place(x=10, y=300)
 
+
     drug_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "drug.png")), size=(24, 24))
     view_button = CTkButton(root, text='View Medicine',bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=drug_image,font=fnt_not_bold,command=view_medicines)
     view_button.place(x=10,y=360)
-
-
 
 
     pills_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "pills.png")), size=(24, 24))
@@ -315,7 +355,7 @@ def main_window():
 
 
     validity_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "validity.png")), size=(24, 24))
-    validity_button = CTkButton(root, text='Validity Check', bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=validity_image ,font=fnt_not_bold,command=add_medicine)
+    validity_button = CTkButton(root, text='Validity Check', bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=validity_image ,font=fnt_not_bold,command=validity_medicines)
     validity_button.place(x=10,y=480)
 
 

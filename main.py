@@ -1,7 +1,6 @@
 from customtkinter import *
 from tkinter import messagebox
-from customtkinter import CTkToplevel
-from tkinter import Text,Toplevel,ttk,Text
+from tkinter import ttk,Text
 from PIL import Image,ImageTk
 import os
 import mysql.connector
@@ -134,6 +133,127 @@ def view_medicines():
         messagebox.showerror('Database Error', f'Database error: {err}')
 
 
+
+
+def modify_medicines():
+
+    LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
+    label_modify_medicines_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
+    label_modify_medicines_screen.place(x=210,y=0)
+    
+    def modify_medicine():
+        # Retrieve modified values
+        modified_name = medicine_name_entry.get()
+        modified_validity = validity_date_entry.get()
+        modified_purchase_price = purchase_price_entry.get()
+        modified_selling_price = selling_price_entry.get()
+        modified_quantity = quantity_entry.get()
+
+
+        try:
+            # Connect to the database
+            mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+            mycursor = mydb.cursor()
+
+            # Update medicine details
+            command = "UPDATE Medicines SET medicine_name=%s, expiry_date=%s, purchase_price=%s, selling_price=%s, quantity=%s WHERE medicine_name=%s"
+            data = (modified_name, modified_validity, modified_purchase_price, modified_selling_price, modified_quantity, search_entry.get())
+            mycursor.execute(command, data)
+
+            mydb.commit()
+            mydb.close()
+
+            messagebox.showinfo("Success", "Medicine details updated successfully")
+        except mysql.connector.Error:
+            pass
+
+    def delete_medicine():
+        try:
+            # Connect to the database
+            mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+            mycursor = mydb.cursor()
+
+            # Execute the delete query
+            command = "DELETE FROM Medicines WHERE medicine_name = %s"
+            mycursor.execute(command, (search_entry.get(),))
+
+            mydb.commit()
+            mydb.close()
+
+            messagebox.showinfo("Success", "Medicine deleted successfully")
+        except mysql.connector.Error as err:
+            messagebox.showerror('Database Error', f'Database error: {err}')
+
+
+    def search_and_modify():
+        if (search_entry.get()=='' or search_entry.get()=='Search Medicine'):
+            messagebox.showerror('Search error', 'Please search for the medicine name first')
+        else:
+            try:
+                # Connect to the database
+                mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+                mycursor = mydb.cursor()
+
+                mycursor.execute("SELECT * FROM Medicines WHERE medicine_name LIKE %s", (f'%{search_entry.get()}%',))
+                medicine = mycursor.fetchone()
+
+                if medicine:
+
+                    messagebox.showinfo("Search Result", "Medicine found. You can modify its details now.")
+
+
+                    modify_medicine()
+                else:
+                    messagebox.showinfo("Search Result", "Medicine not found")
+
+                mydb.close()
+            except mysql.connector.Error as err:
+                messagebox.showerror('Database Error', f'Database error: {err}')
+
+    # Create search bar and button
+    search_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='Search Medicine', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
+                            corner_radius=5, height=47, width=316, text_color='black')
+    search_entry.place(x=40, y=100)
+
+    search_button = CTkButton(label_modify_medicines_screen, text='Search', bg_color='#E7ECF2', fg_color='#2658B6', text_color='white', height=47, width=100,
+                              corner_radius=5, font=fnt_not_bold, command=search_and_modify, hover_color='#3F70D4')
+    search_button.place(x=370, y=100)
+
+    # Entry fields to modify medicine details
+    medicine_name_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='New Medicine Name', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
+                                   corner_radius=5, height=47, width=316, text_color='black')
+    medicine_name_entry.place(x=40, y=200)
+
+    validity_date_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='New Validity Date', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
+                                    corner_radius=5, height=47, width=316, text_color='black')
+    validity_date_entry.place(x=40, y=270)
+
+    purchase_price_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='New Purchase Price', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
+                                     corner_radius=5, height=47, width=316, text_color='black')
+    purchase_price_entry.place(x=40, y=340)
+
+    selling_price_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='New Selling Price', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
+                                    corner_radius=5, height=47, width=316, text_color='black')
+    selling_price_entry.place(x=40, y=410)
+
+    quantity_entry = CTkEntry(label_modify_medicines_screen, placeholder_text='New Quantity', bg_color='#E7ECF2', fg_color='white', border_color='#1E61D8',
+                               corner_radius=5, height=47, width=316, text_color='black')
+    quantity_entry.place(x=40, y=480)
+
+    modify_button = CTkButton(label_modify_medicines_screen, text='Modify', bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',
+                              corner_radius=5, hover_color='#618EE0', font=fnt_not_bold, command=modify_medicine)
+    modify_button.place(x=200, y=550)
+
+    delete_button = CTkButton(label_modify_medicines_screen, text='Delete', bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',
+                              corner_radius=5, hover_color='#618EE0', font=fnt_not_bold, command=delete_medicine)
+    delete_button.place(x=200, y=600)
+
+
+
+
+
+
+
 # Function to handle the login process
 def login_to_main_win():
     if (ent_username.get()=='' or ent_username.get()=='Username') or (ent_password.get()=='' or ent_password.get()=='Password'):
@@ -189,8 +309,8 @@ def main_window():
 
 
 
-    drug_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "pills.png")), size=(24, 24))
-    modify_button = CTkButton(root, text='Modify Medicine',bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=drug_image,font=fnt_not_bold,command=add_medicine)
+    pills_image= CTkImage(Image.open(os.path.join("Pharmacy assets", "buttons", "pills.png")), size=(24, 24))
+    modify_button = CTkButton(root, text='Modify Medicine',bg_color='#2157C2', fg_color='#3F70D4', text_color='white',height=47,width=195,corner_radius=10,hover_color='#618EE0',image=pills_image,font=fnt_not_bold,command=modify_medicines)
     modify_button.place(x=10,y=420)
 
 

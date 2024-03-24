@@ -115,10 +115,9 @@ def add_medicine():
 
 
 
-
 def view_medicines():
-    label_view_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
-    label_view_screen.place(x=210,y=0)
+    label_view_screen = CTkLabel(root, image=LABEL_IMAGE, bg_color='#E7EBF2')
+    label_view_screen.place(x=210, y=0)
     try:
         # Connect to the database
         mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
@@ -130,34 +129,31 @@ def view_medicines():
 
         # Create a frame to contain the table
         tree_frame = CTkFrame(label_view_screen)
-        tree_frame.place(x=100, y=40)
+        tree_frame.place(x=50, y=40)
 
         # Define treeview
-        tree = ttk.Treeview(tree_frame, columns=("Medicine Name", "Expiry Date", "Purchase Price", "Selling Price", "Quantity"))
+        tree = ttk.Treeview(tree_frame, columns=("Medicine Name", "Expiry Date", "Purchase Price", "Selling Price", "Quantity"), show="headings", height=15)
         tree.pack(expand=True, fill="both")
 
+        # Style Configuration
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure("Treeview", font=("Arial", 10), background="#E7EBF2", foreground="black", rowheight=25)
+        style.map("Treeview", background=[("selected", "#0078d7")])
+
         # Define column headings and adjust column width
-        tree.heading("#0", text="ID", anchor=tk.CENTER)
-        tree.column("#0", width=50)
-        tree.heading("#1", text="Medicine Name", anchor=tk.CENTER)
-        tree.column("#1", width=150)
-        tree.heading("#2", text="Expiry Date", anchor=tk.CENTER)
-        tree.column("#2", width=100)
-        tree.heading("#3", text="Purchase Price", anchor=tk.CENTER)
-        tree.column("#3", width=100)
-        tree.heading("#4", text="Selling Price", anchor=tk.CENTER)
-        tree.column("#4", width=100)
-        tree.heading("#5", text="Quantity", anchor=tk.CENTER)
-        tree.column("#5", width=100)
+        columns = ("Medicine Name", "Expiry Date", "Purchase Price", "Selling Price", "Quantity")
+        for col in columns:
+            tree.heading(col, text=col, anchor=tk.CENTER)
+            tree.column(col, width=150, anchor=tk.CENTER)
 
         # Insert data into the treeview
         for idx, medicine in enumerate(medicines, start=1):
-            tree.insert("", "end", text=idx, values=medicine)
+            tree.insert("", "end", values=medicine)
 
         mydb.close()
     except mysql.connector.Error as err:
         messagebox.showerror('Database Error', f'Database error: {err}')
-
 
 
 
@@ -275,34 +271,40 @@ def modify_medicines():
 
 
 def validity_medicines():
-    label_validity_medicines_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
-    label_validity_medicines_screen.place(x=210,y=0)
+    label_validity_medicines_screen = CTkLabel(root, image=LABEL_IMAGE, bg_color='#E7EBF2')
+    label_validity_medicines_screen.place(x=210, y=0)
     try:
         # Connect to the database
         mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
         mycursor = mydb.cursor()
 
         # Execute the query to fetch expired data
-        mycursor.execute("SELECT medicine_name, expiry_date,quantity FROM Medicines WHERE expiry_date<=CURDATE()")
+        mycursor.execute("SELECT medicine_name, expiry_date, quantity FROM Medicines WHERE expiry_date <= CURDATE()")
         medicines = mycursor.fetchall()
 
         # Create a frame to contain the table
         tree_frame = CTkFrame(label_validity_medicines_screen)
-        tree_frame.place(x=200, y=40)
+        tree_frame.place(x=50, y=40)
 
         # Define treeview
-        tree = ttk.Treeview(tree_frame, columns=("Medicine Name", "Expiry Date","Quantity"))
+        tree = ttk.Treeview(tree_frame, columns=("Medicine Name", "Expiry Date", "Quantity"))
         tree.pack(expand=True, fill="both")
+
+        # Style Configuration
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure("Treeview", font=("Arial", 10), background="#E7EBF2", foreground="black", rowheight=25)
+        style.map("Treeview", background=[("selected", "#0078d7")])
 
         # Define column headings and adjust column width
         tree.heading("#0", text="ID", anchor=tk.CENTER)
-        tree.column("#0", width=50)
+        tree.column("#0", width=190, anchor=tk.CENTER)
         tree.heading("#1", text="Medicine Name", anchor=tk.CENTER)
-        tree.column("#1", width=150)
+        tree.column("#1", width=190, anchor=tk.CENTER)
         tree.heading("#2", text="Expiry Date", anchor=tk.CENTER)
-        tree.column("#2", width=100)
+        tree.column("#2", width=190, anchor=tk.CENTER)
         tree.heading("#3", text="Quantity", anchor=tk.CENTER)
-        tree.column("#3", width=100)
+        tree.column("#3", width=190, anchor=tk.CENTER)
 
         # Insert expired data into the table
         for idx, medicine in enumerate(medicines, start=1):
@@ -311,7 +313,6 @@ def validity_medicines():
         mydb.close()
     except mysql.connector.Error as err:
         messagebox.showerror('Database Error', f'Database error: {err}')
-
 
 
 

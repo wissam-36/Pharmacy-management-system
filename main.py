@@ -1,6 +1,6 @@
 from customtkinter import *
 from tkinter import messagebox
-from tkinter import ttk,Text
+from tkinter import ttk
 from PIL import Image,ImageTk
 import os
 import mysql.connector
@@ -22,11 +22,18 @@ iconpath = ImageTk.PhotoImage(file=os.path.join("Pharmacy assets","backgrounds",
 root.wm_iconbitmap()
 root.iconphoto(False, iconpath)
 
+
 LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "labelscreen.png")), size=(890, 720))
 
 
 
+# replace your mysql username and password here:
+mysql_user='root'
+mysql_password='2003'
 
+# replace your mysql database name for login and pharmacy here:
+mysql_loginDB_name='loginDB'
+mysql_pharnacyDB_name='PharmacyDB'
 
 
 
@@ -34,6 +41,19 @@ LABEL_IMAGE=CTkImage(Image.open(os.path.join("Pharmacy assets", "backgrounds", "
 def add_medicine():
     label_add_medicine_screen=CTkLabel(root,image=LABEL_IMAGE,bg_color='#E7EBF2')
     label_add_medicine_screen.place(x=210,y=0)
+
+
+    def reset_button():
+        medicine_name.delete(0, 'end')
+
+        medicine_quantity.delete(0, 'end')
+        
+        validity_date.delete(0, 'end')
+
+        purchase_price.delete(0, 'end')
+
+        selling_price.delete(0, 'end')
+
 
     def save_medicine():
         if (medicine_name.get()=='' or medicine_name.get()=='Medicine Name') or \
@@ -45,7 +65,7 @@ def add_medicine():
         else:
             try:
                 # Connect to the database
-                mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+                mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
                 mycursor = mydb.cursor()
                 print("connected to database")
             
@@ -61,6 +81,7 @@ def add_medicine():
 
             except mysql.connector.Error as err:
                 messagebox.showerror('Database Error', f'Database error: {err}')
+
 
 
     medicine_name = CTkEntry(label_add_medicine_screen, placeholder_text='Medicine Name', bg_color='#E7ECF2', fg_color='white',
@@ -88,7 +109,7 @@ def add_medicine():
     done_btn.place(x=710, y=600)
 
     reset_btn = CTkButton(label_add_medicine_screen, text='Reset', bg_color='#E7ECF2', fg_color='#3F70D4', text_color='white',
-                          corner_radius=5, hover_color='#618EE0', font=fnt_not_bold)
+                          corner_radius=5, hover_color='#618EE0', font=fnt_not_bold,command=reset_button)
     reset_btn.place(x=710, y=640)
 
 
@@ -100,7 +121,7 @@ def view_medicines():
     label_view_screen.place(x=210,y=0)
     try:
         # Connect to the database
-        mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+        mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
         mycursor = mydb.cursor()
 
         # Execute the query to fetch data
@@ -155,7 +176,7 @@ def modify_medicines():
 
         try:
             # Connect to the database
-            mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+            mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
             mycursor = mydb.cursor()
 
             # Update medicine details
@@ -173,7 +194,7 @@ def modify_medicines():
     def delete_medicine():
         try:
             # Connect to the database
-            mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+            mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
             mycursor = mydb.cursor()
 
             # Execute the delete query
@@ -194,7 +215,7 @@ def modify_medicines():
         else:
             try:
                 # Connect to the database
-                mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+                mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
                 mycursor = mydb.cursor()
 
                 mycursor.execute("SELECT * FROM Medicines WHERE medicine_name LIKE %s", (f'%{search_entry.get()}%',))
@@ -258,7 +279,7 @@ def validity_medicines():
     label_validity_medicines_screen.place(x=210,y=0)
     try:
         # Connect to the database
-        mydb = mysql.connector.connect(host='localhost', user='root', password='2003', database='PharmacyDB')
+        mydb = mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_pharnacyDB_name)
         mycursor = mydb.cursor()
 
         # Execute the query to fetch expired data
@@ -291,33 +312,6 @@ def validity_medicines():
     except mysql.connector.Error as err:
         messagebox.showerror('Database Error', f'Database error: {err}')
 
-
-
-
-
-# Function to handle the login process
-def login_to_main_win():
-    if (ent_username.get()=='' or ent_username.get()=='Username') or (ent_password.get()=='' or ent_password.get()=='Password'):
-        messagebox.showerror('Entry error','Type user name or password !!')
-    else:
-        try:
-            # Connect to the database
-            with mysql.connector.connect(host='localhost', user='root', password='2003', database='loginDB') as mydb:
-                mycursor = mydb.cursor()
-                print("connected to database")
-                command = "SELECT * FROM login WHERE Username=%s AND Password=%s"
-                mycursor.execute(command, (ent_username.get(), ent_password.get()))
-                myresult = mycursor.fetchone()
-                print(myresult)
-                if myresult is None:
-                    messagebox.showinfo("invalid", "Invalid username and password")
-
-                else:
-                    messagebox.showinfo("Login", "Successfully logged in")
-                    main_window()  
-        except mysql.connector.Error as err:
-            messagebox.showerror('Connection error', f'Database connection error: {err}')
-            return
 
 
 
@@ -361,6 +355,37 @@ def main_window():
 
 
 
+
+
+# Function to handle the login process
+def login_to_main_win():
+    if (ent_username.get()=='' or ent_username.get()=='Username') or (ent_password.get()=='' or ent_password.get()=='Password'):
+        messagebox.showerror('Entry error','Type user name or password !!')
+    else:
+        try:
+            # Connect to the database
+            mydb= mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_loginDB_name)
+            mycursor = mydb.cursor()
+            print("connected to database")
+            command = "SELECT * FROM login WHERE Username=%s AND Password=%s"
+            mycursor.execute(command, (ent_username.get(), ent_password.get()))
+            myresult = mycursor.fetchone()
+            print(myresult)
+            if myresult is None:
+                messagebox.showinfo("invalid", "Invalid username and password")
+
+            else:
+                messagebox.showinfo("Login", "Successfully logged in")
+                main_window()  
+        except mysql.connector.Error as err:
+            messagebox.showerror('Connection error', f'Database connection error: {err}')
+            return
+
+
+
+
+
+
 def sign_up_function():
         print(ent_new_username.get(),ent_new_password.get())
         if (ent_new_username.get()=='' or ent_new_username.get()=='Add Username') or (ent_new_password.get()=='' or ent_new_password.get()=='Add Password'):
@@ -368,7 +393,7 @@ def sign_up_function():
         else:
                 try:
                         # Connect to the database
-                        mydb=mysql.connector.connect(host='localhost',user='root',password='2003',database='loginDB')
+                        mydb=mysql.connector.connect(host='localhost', user=mysql_user, password=mysql_password, database=mysql_loginDB_name)
                         mycursor=mydb.cursor()
                         print("connected to database")
                         # Insert new user into database
